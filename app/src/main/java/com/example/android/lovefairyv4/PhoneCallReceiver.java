@@ -45,6 +45,18 @@ public class PhoneCallReceiver extends BroadcastReceiver {
     //Derived classes should override these to respond to specific events of interest
     protected void onIncomingCallStarted(String number, Date start){
 
+        recorder = new MediaRecorder();
+        recorder.setAudioSource(MediaRecorder.AudioSource.VOICE_DOWNLINK);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        recorder.setOutputFile(mFilePath.toString() + "/nircorder.wav");
+        try {
+            recorder.prepare();
+        } catch (java.io.IOException e) {
+            recorder = null;
+            return;
+        }
+        recorder.start();
         Log.e("onIncomingCallStarted","----");
     }
     protected void onOutgoingCallStarted(String number, Date start){
@@ -66,6 +78,18 @@ public class PhoneCallReceiver extends BroadcastReceiver {
     protected void onIncomingCallEnded(String number, Date start, Date end){
 
 
+        recorder = new MediaRecorder();
+        recorder.setAudioSource(MediaRecorder.AudioSource.VOICE_DOWNLINK);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        recorder.setOutputFile(mFilePath.toString() + "/nircorder.wav");
+        try {
+            recorder.prepare();
+        } catch (java.io.IOException e) {
+            recorder = null;
+            return;
+        }
+        recorder.start();
         Log.e("onIncomingCallEnded","----");
     }
     protected void onOutgoingCallEnded(String number, Date start, Date end){
@@ -73,8 +97,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 
         if (recorder != null){
             recorder.stop();
-            Intent serviceIntent = new Intent(savedContext,UploadAudioService.class);
-            savedContext.startService(serviceIntent);
+
             Log.e("Recorderstopped", "---------------------------");
         }
         Log.e("onOutgoingCallEnded","-----");
