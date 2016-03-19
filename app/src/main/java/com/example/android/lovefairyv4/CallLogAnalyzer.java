@@ -10,7 +10,6 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Nir on 3/18/2016.
@@ -24,36 +23,37 @@ public class CallLogAnalyzer extends AsyncTask<Context,Void,Void> {
     private static HashMap<String,Integer> durationHM = new HashMap<>();
     private static Integer i1 = null;
     private static Integer i2 = null;
+    private static Context context;
 
     @Override
     protected Void doInBackground(Context... params) {
 
-        String temp = getCallLogDetails(params[0]);
+        context = params[0];
+        getCallLogDetails(context);
 
-        Log.wtf("incomingCounterHM", "" + incomingCounterHM.size());
-        Log.wtf("outgoingCounterHM", "" + outgoingCounterHM.size());
-        Log.wtf("missedCounterHM", "" + missedCounterHM.size());
-        Log.wtf("durationHM", "" + durationHM.size());
 
-        for (Map.Entry<String, Integer> keyset : durationHM.entrySet()){
-
-            String key = keyset.getKey();
-            Integer duration = keyset.getValue();
-
-            Log.e("loop" , "Phone: " + key +
-                    " Duration: " + duration +
-                    " IncomingCounter: " + incomingCounterHM.get(key) +
-                    " Outgoing: " + outgoingCounterHM.get(key) +
-                    " Missed: " + missedCounterHM.get(key));
-
-        }
+//        for (Map.Entry<String, Integer> keyset : durationHM.entrySet()){
+//
+//            String key = keyset.getKey();
+//            Integer duration = keyset.getValue();
+//
+//            Log.e("CallLogSummary" , "Phone: " + key +
+//                    " Duration: " + duration +
+//                    " IncomingCounter: " + incomingCounterHM.get(key) +
+//                    " Outgoing: " + outgoingCounterHM.get(key) +
+//                    " Missed: " + missedCounterHM.get(key));
+//
+//        }
+        //DataBaseHandler db = new DataBaseHandler(context);
+        //db.addMultipleCallLogs(durationHM,incomingCounterHM,outgoingCounterHM,missedCounterHM);
+        //db.addCallLog("5",999,DataBaseHandler.KEY_INCOMING_COUNTER);
+        //Log.e("isTopFive ", db.isTopFive("0528581457", DataBaseHandler.KEY_INCOMING_COUNTER) + "");
 
         return null;
     }
 
-    private static String getCallLogDetails(Context context) {
+    private static void getCallLogDetails(Context context) {
 
-        Log.wtf("here", "--------------------------------------------");
         StringBuffer stringBuffer = new StringBuffer();
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
 
@@ -114,7 +114,6 @@ public class CallLogAnalyzer extends AsyncTask<Context,Void,Void> {
 
         }
         cursor.close();
-        return stringBuffer.toString();
     }
 
 

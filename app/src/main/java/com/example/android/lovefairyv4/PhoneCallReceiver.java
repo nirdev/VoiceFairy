@@ -7,7 +7,8 @@ import android.media.MediaRecorder;
 import android.os.Environment;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import android.util.Log;
+
+import com.example.android.lovefairyv4.SQLite.DataBaseHandler;
 
 import java.io.File;
 import java.util.Date;
@@ -19,13 +20,15 @@ public class PhoneCallReceiver extends BroadcastReceiver {
     static PhonecallStartEndDetector listener;
     File mFilePath = Environment.getExternalStorageDirectory();
     MediaRecorder recorder;
+    Intent i;
     protected Context savedContext;
 
 
     @Override
-    public void onReceive(Context context, Intent intent) {
 
+    public void onReceive(Context context, Intent intent) {
         savedContext = context;
+        i = new Intent(savedContext, NotificationMagician.class);
         if(listener == null){
             listener = new PhonecallStartEndDetector();
         }
@@ -45,66 +48,25 @@ public class PhoneCallReceiver extends BroadcastReceiver {
     //Derived classes should override these to respond to specific events of interest
     protected void onIncomingCallStarted(String number, Date start){
 
-        recorder = new MediaRecorder();
-        recorder.setAudioSource(MediaRecorder.AudioSource.VOICE_DOWNLINK);
-        recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        recorder.setOutputFile(mFilePath.toString() + "/nircorder.wav");
-        try {
-            recorder.prepare();
-        } catch (java.io.IOException e) {
-            recorder = null;
-            return;
-        }
-        recorder.start();
-        Log.e("onIncomingCallStarted","----");
     }
     protected void onOutgoingCallStarted(String number, Date start){
 
-        recorder = new MediaRecorder();
-        recorder.setAudioSource(MediaRecorder.AudioSource.VOICE_DOWNLINK);
-        recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        recorder.setOutputFile(mFilePath.toString() + "/nircorder.wav");
-        try {
-            recorder.prepare();
-        } catch (java.io.IOException e) {
-            recorder = null;
-            return;
-        }
-        recorder.start();
-        Log.e("onOutgoingCallStarted","----");
     }
     protected void onIncomingCallEnded(String number, Date start, Date end){
+        i.putExtra(NotificationMagician.PHONE_NUMBER,number);
+        i.putExtra(NotificationMagician.CALL_TYPE, DataBaseHandler.KEY_INCOMING_COUNTER);
+        savedContext.startService(i);
 
-
-        recorder = new MediaRecorder();
-        recorder.setAudioSource(MediaRecorder.AudioSource.VOICE_DOWNLINK);
-        recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        recorder.setOutputFile(mFilePath.toString() + "/nircorder.wav");
-        try {
-            recorder.prepare();
-        } catch (java.io.IOException e) {
-            recorder = null;
-            return;
-        }
-        recorder.start();
-        Log.e("onIncomingCallEnded","----");
     }
     protected void onOutgoingCallEnded(String number, Date start, Date end){
-
-
-        if (recorder != null){
-            recorder.stop();
-
-            Log.e("Recorderstopped", "---------------------------");
-        }
-        Log.e("onOutgoingCallEnded","-----");
+        i.putExtra(NotificationMagician.PHONE_NUMBER,number);
+        i.putExtra(NotificationMagician.CALL_TYPE, DataBaseHandler.KEY_OUTGOING_COUNTER);
+        savedContext.startService(i);
     }
     protected void onMissedCall(String number, Date start){
-
-        Log.e("onMissedCall","-----");
+        i.putExtra(NotificationMagician.PHONE_NUMBER,number);
+        i.putExtra(NotificationMagician.CALL_TYPE, DataBaseHandler.KEY_MISSED_COUNTER);
+        savedContext.startService(i);
     }
 
 

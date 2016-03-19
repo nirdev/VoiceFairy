@@ -10,6 +10,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.lovefairyv4.SQLite.DataBaseHandler;
+
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -28,10 +30,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new CallLogAnalyzer().execute(this);
 
-//        Intent i = new Intent(this, MagicActivity.class);
-//        startActivity(i);
+
+        Intent i = new Intent(this, NotificationMagician.class);
+        i.putExtra(NotificationMagician.PHONE_NUMBER, "0528581457");
+        i.putExtra(NotificationMagician.CALL_TYPE, DataBaseHandler.KEY_INCOMING_COUNTER);
+        startService(i);
 
         txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
         txtBelowMic = (TextView) findViewById(R.id.text_below_mic);
