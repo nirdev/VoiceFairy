@@ -8,9 +8,9 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.android.lovefairyv4.MagicActivity">
+    tools:context="acom.voice.fairy.lovefairyv4.MagicActivity">
 
-    <com.example.android.lovefairyv4.TypeWriter
+    <acom.voice.fairy.lovefairyv4.TypeWriter
         android:id="@+id/typeWriter"
         android:layout_width="wrap_content"
         android:textColor="@android:color/white"

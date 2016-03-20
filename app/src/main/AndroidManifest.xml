@@ -15,7 +15,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name="acom.voice.fairy.lovefairyv4.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,7 +24,7 @@
         </activity>
 
         <receiver
-            android:name=".PhoneCallReceiver"
+            android:name="acom.voice.fairy.lovefairyv4.PhoneCallReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -33,10 +33,10 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".MagicActivity" />
+        <activity android:name="acom.voice.fairy.lovefairyv4.MagicActivity" />
 
         <service
-            android:name=".NotificationMagician"
+            android:name="acom.voice.fairy.lovefairyv4.NotificationMagician"
             android:exported="false"></service>
     </application>
 

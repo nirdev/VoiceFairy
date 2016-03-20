@@ -1,26 +1,22 @@
-package com.example.android.lovefairyv4;
+package acom.voice.fairy.lovefairyv4;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaRecorder;
-import android.os.Environment;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
-import com.example.android.lovefairyv4.SQLite.DataBaseHandler;
-
-import java.io.File;
 import java.util.Date;
+
+import acom.voice.fairy.lovefairyv4.SQLite.DataBaseHandler;
 
 // taken from https://stackoverflow.com/questions/16878840/android-incoming-outgoing-calls/16888683#16888683?newreg=20be99b404ea4f00bc8db04bf90be3e0
 public class PhoneCallReceiver extends BroadcastReceiver {
 
     //The receiver will be recreated whenever android feels like it.  We need a static variable to remember data between instantiations
     static PhonecallStartEndDetector listener;
-    File mFilePath = Environment.getExternalStorageDirectory();
-    MediaRecorder recorder;
     Intent i;
+    int callDuration;
     protected Context savedContext;
 
 
@@ -42,31 +38,48 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         //The other intent tells us the phone state changed.  Here we set a listener to deal with it
         TelephonyManager telephony = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
         telephony.listen(listener, PhoneStateListener.LISTEN_CALL_STATE);
+
     }
 
 
     //Derived classes should override these to respond to specific events of interest
-    protected void onIncomingCallStarted(String number, Date start){
+    protected void onIncomingCallStarted(String number, Date start){}
+    protected void onOutgoingCallStarted(String number, Date start){}
 
-    }
-    protected void onOutgoingCallStarted(String number, Date start){
-
-    }
     protected void onIncomingCallEnded(String number, Date start, Date end){
-        i.putExtra(NotificationMagician.PHONE_NUMBER,number);
-        i.putExtra(NotificationMagician.CALL_TYPE, DataBaseHandler.KEY_INCOMING_COUNTER);
-        savedContext.startService(i);
+
+        //Only notify if call is not to short
+        callDuration = (int) (end.getTime() - start.getTime())/1000;
+        if ( callDuration > 60) {
+            i.putExtra(NotificationMagician.PHONE_NUMBER, number);
+            i.putExtra(NotificationMagician.CALL_TYPE, DataBaseHandler.KEY_INCOMING_COUNTER);
+            i.putExtra(NotificationMagician.DURATION,callDuration);
+            savedContext.startService(i);
+        }else { //Just save
+            DataBaseHandler db = new DataBaseHandler(savedContext);
+            db.addCallLog(number,callDuration,DataBaseHandler.KEY_INCOMING_COUNTER);
+        }
 
     }
     protected void onOutgoingCallEnded(String number, Date start, Date end){
-        i.putExtra(NotificationMagician.PHONE_NUMBER,number);
-        i.putExtra(NotificationMagician.CALL_TYPE, DataBaseHandler.KEY_OUTGOING_COUNTER);
-        savedContext.startService(i);
+
+        //Only notify if call is not to short
+        callDuration = (int) (end.getTime() - start.getTime())/1000;
+        if (callDuration > 70) {
+            i.putExtra(NotificationMagician.PHONE_NUMBER, number);
+            i.putExtra(NotificationMagician.CALL_TYPE, DataBaseHandler.KEY_OUTGOING_COUNTER);
+            i.putExtra(NotificationMagician.DURATION,callDuration);
+            savedContext.startService(i);
+        }else { //Just save
+            DataBaseHandler db = new DataBaseHandler(savedContext);
+            db.addCallLog(number,callDuration,DataBaseHandler.KEY_OUTGOING_COUNTER);
+        }
     }
     protected void onMissedCall(String number, Date start){
-        i.putExtra(NotificationMagician.PHONE_NUMBER,number);
-        i.putExtra(NotificationMagician.CALL_TYPE, DataBaseHandler.KEY_MISSED_COUNTER);
-        savedContext.startService(i);
+
+        DataBaseHandler db = new DataBaseHandler(savedContext);
+        db.addCallLog(number,0,DataBaseHandler.KEY_MISSED_COUNTER);
+
     }
 
 
